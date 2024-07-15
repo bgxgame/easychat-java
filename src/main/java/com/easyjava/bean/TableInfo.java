@@ -122,4 +122,19 @@ public class TableInfo {
     public void setHavaBigDecimal(Boolean havaBigDecimal) {
         this.havaBigDecimal = havaBigDecimal;
     }
+
+    @Override
+    public String toString() {
+        return "TableInfo{" +
+                "tableName='" + tableName + '\'' +
+                ", beanName='" + beanName + '\'' +
+                ", beanParamName='" + beanParamName + '\'' +
+                ", comment='" + comment + '\'' +
+                ", fieldList=" + fieldList +
+                ", keyIndexMap=" + keyIndexMap +
+                ", havaData=" + havaData +
+                ", haveDataTime=" + haveDataTime +
+                ", havaBigDecimal=" + havaBigDecimal +
+                '}';
+    }
 }

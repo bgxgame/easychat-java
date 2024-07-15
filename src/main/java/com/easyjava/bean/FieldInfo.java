@@ -75,4 +75,16 @@ public class FieldInfo {
     public void setIsAutoIncrement(String isAutoIncrement) {
         this.isAutoIncrement = isAutoIncrement;
     }
+
+    @Override
+    public String toString() {
+        return "FieldInfo{" +
+                "FieldName='" + FieldName + '\'' +
+                ", propertyName='" + propertyName + '\'' +
+                ", sqlType='" + sqlType + '\'' +
+                ", javaType='" + javaType + '\'' +
+                ", comment='" + comment + '\'' +
+                ", isAutoIncrement='" + isAutoIncrement + '\'' +
+                '}';
+    }
 }

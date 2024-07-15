@@ -3,6 +3,7 @@ package com.easyjava.builder;
 import com.easyjava.bean.Constants;
 import com.easyjava.bean.TableInfo;
 import com.easyjava.utils.PropertiesUtils;
+import com.easyjava.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,16 +43,21 @@ public class BuildTable {
                 String tableName = tableResult.getString("name");
                 String comment = tableResult.getString("comment");
                 // logger.info("tableName:{},comment:{}", tableName, comment);
-                TableInfo tableInfo = new TableInfo();
-                tableInfo.setTableName(tableName);
-
                 String beanName = tableName;
                 // 如果忽略表前缀，就只取后半部分表名
                 if (Constants.IGNORE_TABLE_PREFIX) {
                     beanName = tableName.substring(beanName.indexOf("_") + 1);
                 }
+                beanName = processField(beanName, true);
 
-                logger.info(beanName);
+                TableInfo tableInfo = new TableInfo();
+                // 表基本信息
+                tableInfo.setTableName(tableName);
+                tableInfo.setBeanName(beanName);
+                tableInfo.setComment(comment);
+                tableInfo.setBeanParamName(beanName + Constants.SUFFIX_BEAN_PARAM);
+
+                logger.info(tableInfo.toString());
             }
         } catch (Exception e) {
             logger.error("读取表失败", e);
@@ -79,4 +85,24 @@ public class BuildTable {
             }
         }
     }
+
+    /**
+     * 处理字段 bean
+     *
+     * @param field                字段名
+     * @param upperCaseFirstLetter 首字母是否需要大写
+     * @return 驼峰命名字段
+     */
+    private static String processField(String field, Boolean upperCaseFirstLetter) {
+        StringBuffer sb = new StringBuffer();
+        String[] fileds = field.split("_");
+        // 处理首单词是否转大写
+        sb.append(upperCaseFirstLetter ? StringUtils.upperCaseFirstLetter(fileds[0]) : fileds[0]);
+
+        for (int i = 1, len = fileds.length; i < len; i++) {
+            sb.append(StringUtils.upperCaseFirstLetter(fileds[i]));
+        }
+        return sb.toString();
+    }
+
 }
