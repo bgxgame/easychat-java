@@ -4,11 +4,21 @@ import com.easyjava.utils.PropertiesUtils;
 
 public class Constants {
 
+    // 时间类型
+    public final static String[] SQL_DATE_TIME_TYPES = new String[]{"datetime", "timestamp"};
+
+    // 日期类型
+    public final static String[] SQL_DATE_TYPES = new String[]{"date"};
+    public final static String[] SQL_DECIMAL_TYPE = new String[]{"decimal", "double", "float"};
+    public final static String[] SQL_STRING_TYPE = new String[]{"char", "varchar", "text", "mediumtext", "longtext"};
+    public final static String[] SQL_INTEGER_TYPE = new String[]{"int", "tinyint"};
+    public final static String[] SQL_LONG_TYPE = new String[]{"bigint"};
+
+
     /**
      * 是否忽略表前缀
      */
     public static Boolean IGNORE_TABLE_PREFIX;
-
     /**
      * 参数bean后缀
      */
