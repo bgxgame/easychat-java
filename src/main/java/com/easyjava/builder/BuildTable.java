@@ -3,7 +3,6 @@ package com.easyjava.builder;
 import com.easyjava.bean.Constants;
 import com.easyjava.bean.FieldInfo;
 import com.easyjava.bean.TableInfo;
-import com.easyjava.utils.JsonUtils;
 import com.easyjava.utils.PropertiesUtils;
 import com.easyjava.utils.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -13,7 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BuildTable {
     private static final Logger logger = LoggerFactory.getLogger(BuildTable.class);
@@ -185,6 +186,12 @@ public class BuildTable {
         ResultSet fieldResult = null;
 
         try {
+            // 减少在处理索引时遍历操作
+            Map<String, FieldInfo> tempMap = new HashMap();
+            for (FieldInfo fieldInfo : tableInfo.getFieldList()) {
+                tempMap.put(fieldInfo.getFieldName(), fieldInfo);
+            }
+
             ps = conn.prepareStatement(String.format(SQL_SHOW_TABLE_INDEX, tableInfo.getTableName()));
             fieldResult = ps.executeQuery();
             while (fieldResult.next()) {
@@ -196,21 +203,9 @@ public class BuildTable {
 
                 // 通过传入的 tableInfo 得到 keyFieldList
                 List<FieldInfo> keyFieldList = tableInfo.getKeyIndexMap().computeIfAbsent(keyName, k -> new ArrayList<>());
-                // /\
-                // ||    功能等价
-                // || 第一次拿到map后有可能没值
-                // if (null == keyFieldList) {
-                //     keyFieldList = new ArrayList();
-                //     tableInfo.getKeyIndexMap().put(keyName, keyFieldList);
-                // }
 
-                // 遍历表字段 通过列名带出列清单添加到keyFieldList
-                for (FieldInfo fieldInfo : tableInfo.getFieldList()) {
-                    if (fieldInfo.getFieldName().equals(columnName)) {
-                        // 向 tableInfo 添加 索引信息
-                        keyFieldList.add(fieldInfo);
-                    }
-                }
+                // 向tableInfo 设置 索引集
+                keyFieldList.add(tempMap.get(columnName));
             }
         } catch (Exception e) {
             logger.error("读取索引失败", e);
@@ -241,12 +236,12 @@ public class BuildTable {
      */
     private static String processField(String field, Boolean upperCaseFirstLetter) {
         StringBuffer sb = new StringBuffer();
-        String[] fileds = field.split("_");
+        String[] fields = field.split("_");
         // 处理首单词是否转大写
-        sb.append(upperCaseFirstLetter ? StringUtils.upperCaseFirstLetter(fileds[0]) : fileds[0]);
+        sb.append(upperCaseFirstLetter ? StringUtils.upperCaseFirstLetter(fields[0]) : fields[0]);
 
-        for (int i = 1, len = fileds.length; i < len; i++) {
-            sb.append(StringUtils.upperCaseFirstLetter(fileds[i]));
+        for (int i = 1, len = fields.length; i < len; i++) {
+            sb.append(StringUtils.upperCaseFirstLetter(fields[i]));
         }
         return sb.toString();
     }

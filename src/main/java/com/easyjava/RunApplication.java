@@ -1,8 +1,8 @@
 package com.easyjava;
 
 import com.easyjava.bean.TableInfo;
+import com.easyjava.builder.BuildPo;
 import com.easyjava.builder.BuildTable;
-import com.easyjava.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +13,8 @@ public class RunApplication {
 
     public static void main(String[] args) {
         List<TableInfo> tableInfoList = BuildTable.getTables();
-        logger.info(JsonUtils.convertObj2Json(tableInfoList));
+        for (TableInfo tableInfo : tableInfoList) {
+            BuildPo.execute(tableInfo);
+        }
     }
 }
