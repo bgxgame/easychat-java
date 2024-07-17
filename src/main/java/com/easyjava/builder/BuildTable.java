@@ -3,6 +3,7 @@ package com.easyjava.builder;
 import com.easyjava.bean.Constants;
 import com.easyjava.bean.FieldInfo;
 import com.easyjava.bean.TableInfo;
+import com.easyjava.utils.JsonUtils;
 import com.easyjava.utils.PropertiesUtils;
 import com.easyjava.utils.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -19,6 +20,7 @@ public class BuildTable {
     private static Connection conn = null;
     private static String SQL_SHOW_TABLE_STATUS = "show table status";
     private static String SQL_SHOW_TABLE_FIELDS = "show full fields from %s";
+    private static String SQL_SHOW_TABLE_INDEX = "show index from %s";
 
     static {
         String driverName = PropertiesUtils.getString("db.driver-class-name");
@@ -37,7 +39,7 @@ public class BuildTable {
     /**
      * 得到表基本信息
      */
-    public static void getTables() {
+    public static List<TableInfo> getTables() {
         PreparedStatement ps = null;
         ResultSet tableResult = null;
 
@@ -63,10 +65,19 @@ public class BuildTable {
                 tableInfo.setBeanName(beanName);
                 tableInfo.setComment(comment);
                 tableInfo.setBeanParamName(beanName + Constants.SUFFIX_BEAN_PARAM);
-                List<FieldInfo> fieldInfoList = readFieldInfo(tableInfo);
-                tableInfo.setFieldList(fieldInfoList);
-                logger.info(String.valueOf(tableInfo));
+
+                // 得到表字段信息清单
+                readFieldInfo(tableInfo);
+
+                // 添加表索引集合
+                getKeyIndexInfo(tableInfo);
+
+                // 添加表详细信息到清单
+                tableInfoList.add(tableInfo);
+
+                // logger.info(JsonUtils.convertObj2Json(tableInfo));
             }
+
         } catch (Exception e) {
             logger.error("读取表失败", e);
         } finally {
@@ -92,6 +103,7 @@ public class BuildTable {
                 }
             }
         }
+        return tableInfoList;
     }
 
     /**
@@ -100,7 +112,7 @@ public class BuildTable {
      * @param tableInfo
      * @return
      */
-    private static List<FieldInfo> readFieldInfo(TableInfo tableInfo) {
+    private static void readFieldInfo(TableInfo tableInfo) {
         PreparedStatement ps = null;
         ResultSet fieldResult = null;
 
@@ -129,17 +141,18 @@ public class BuildTable {
                 fieldInfo.setPropertyName(propertyName);
                 // 将sql类型转换为java类型
                 fieldInfo.setJavaType(processJavaType(sqlType));
+
                 fieldInfoList.add(fieldInfo);
-                if (ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, sqlType)) {
-                    tableInfo.setHaveDataTime(true);
-                }
-                if (ArrayUtils.contains(Constants.SQL_DATE_TYPES, sqlType)) {
-                    tableInfo.setHavaData(true);
-                }
-                if (ArrayUtils.contains(Constants.SQL_DECIMAL_TYPE, sqlType)) {
-                    tableInfo.setHavaBigDecimal(true);
-                }
+
+                // 设置时间相关 Property
+                tableInfo.setHaveDataTime(ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, sqlType));
+                tableInfo.setHavaData(ArrayUtils.contains(Constants.SQL_DATE_TYPES, sqlType));
+                tableInfo.setHavaBigDecimal(ArrayUtils.contains(Constants.SQL_DECIMAL_TYPE, sqlType));
+
             }
+
+            // 设置字段详细信息
+            tableInfo.setFieldList(fieldInfoList);
 
         } catch (Exception e) {
             logger.error("读取表失败", e);
@@ -159,7 +172,64 @@ public class BuildTable {
                 }
             }
         }
-        return fieldInfoList;
+    }
+
+    /**
+     * 得到表唯一索引合集
+     *
+     * @param tableInfo
+     * @return
+     */
+    private static void getKeyIndexInfo(TableInfo tableInfo) {
+        PreparedStatement ps = null;
+        ResultSet fieldResult = null;
+
+        try {
+            ps = conn.prepareStatement(String.format(SQL_SHOW_TABLE_INDEX, tableInfo.getTableName()));
+            fieldResult = ps.executeQuery();
+            while (fieldResult.next()) {
+                String keyName = fieldResult.getString("key_name");
+                Integer nonUnique = fieldResult.getInt("non_unique");
+                String columnName = fieldResult.getString("column_name");
+                // 唯一索引 码值为0
+                if (nonUnique != 0) continue;
+
+                // 通过传入的 tableInfo 得到 keyFieldList
+                List<FieldInfo> keyFieldList = tableInfo.getKeyIndexMap().computeIfAbsent(keyName, k -> new ArrayList<>());
+                // /\
+                // ||    功能等价
+                // || 第一次拿到map后有可能没值
+                // if (null == keyFieldList) {
+                //     keyFieldList = new ArrayList();
+                //     tableInfo.getKeyIndexMap().put(keyName, keyFieldList);
+                // }
+
+                // 遍历表字段 通过列名带出列清单添加到keyFieldList
+                for (FieldInfo fieldInfo : tableInfo.getFieldList()) {
+                    if (fieldInfo.getFieldName().equals(columnName)) {
+                        // 向 tableInfo 添加 索引信息
+                        keyFieldList.add(fieldInfo);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("读取索引失败", e);
+        } finally {
+            if (fieldResult != null) {
+                try {
+                    fieldResult.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     /**
