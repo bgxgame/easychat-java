@@ -147,14 +147,22 @@ public class BuildTable {
 
                 // 设置时间相关 Property
                 // fix bug tableInfo 属性会被清除 因为遍历时字段类型有随机性
-                if (null == tableInfo.getHaveDataTime() || !tableInfo.getHaveDataTime()) {
-                    tableInfo.setHaveDataTime(ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, sqlType));
+                if (ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, sqlType)) {
+                    tableInfo.setHaveDataTime(true);
+                } else if (null == tableInfo.getHaveDataTime()) {
+                    tableInfo.setHaveDataTime(false);
                 }
-                if (null == tableInfo.getHavaData() || !tableInfo.getHavaData()) {
-                    tableInfo.setHavaData(ArrayUtils.contains(Constants.SQL_DATE_TYPES, sqlType));
+
+                if (ArrayUtils.contains(Constants.SQL_DATE_TYPES, sqlType)) {
+                    tableInfo.setHavaData(true);
+                } else if (null == tableInfo.getHavaData()) {
+                    tableInfo.setHavaData(false);
                 }
-                if (null == tableInfo.getHavaBigDecimal() || !tableInfo.getHavaBigDecimal()) {
-                    tableInfo.setHavaBigDecimal(ArrayUtils.contains(Constants.SQL_DECIMAL_TYPE, sqlType));
+
+                if (ArrayUtils.contains(Constants.SQL_DECIMAL_TYPE, sqlType)) {
+                    tableInfo.setHavaBigDecimal(true);
+                } else if (null == tableInfo.getHavaBigDecimal()) {
+                    tableInfo.setHavaBigDecimal(false);
                 }
 
             }
