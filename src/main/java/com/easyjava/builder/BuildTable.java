@@ -119,6 +119,10 @@ public class BuildTable {
 
         List<FieldInfo> fieldInfoList = new ArrayList();
 
+        Boolean haveDateTime = false;
+        Boolean haveDate = false;
+        Boolean haveBigDecimal = false;
+
         try {
             ps = conn.prepareStatement(String.format(SQL_SHOW_TABLE_FIELDS, tableInfo.getTableName()));
             fieldResult = ps.executeQuery();
@@ -147,25 +151,15 @@ public class BuildTable {
 
                 // 设置时间相关 Property
                 // fix bug tableInfo 属性会被清除 因为遍历时字段类型有随机性
-                if (ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, sqlType)) {
-                    tableInfo.setHaveDataTime(true);
-                } else if (null == tableInfo.getHaveDataTime()) {
-                    tableInfo.setHaveDataTime(false);
-                }
-
-                if (ArrayUtils.contains(Constants.SQL_DATE_TYPES, sqlType)) {
-                    tableInfo.setHavaData(true);
-                } else if (null == tableInfo.getHavaData()) {
-                    tableInfo.setHavaData(false);
-                }
-
-                if (ArrayUtils.contains(Constants.SQL_DECIMAL_TYPE, sqlType)) {
-                    tableInfo.setHavaBigDecimal(true);
-                } else if (null == tableInfo.getHavaBigDecimal()) {
-                    tableInfo.setHavaBigDecimal(false);
-                }
+                if (ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, sqlType)) haveDateTime = true;
+                if (ArrayUtils.contains(Constants.SQL_DATE_TYPES, sqlType)) haveDate = true;
+                if (ArrayUtils.contains(Constants.SQL_DECIMAL_TYPE, sqlType)) haveBigDecimal = true;
 
             }
+
+            tableInfo.setHavaData(haveDate);
+            tableInfo.setHaveDataTime(haveDateTime);
+            tableInfo.setHavaBigDecimal(haveBigDecimal);
 
             // 设置字段详细信息
             tableInfo.setFieldList(fieldInfoList);

@@ -39,6 +39,7 @@ public class BuildPo {
             // 开始生成头部内容
             bw.write("package " + Constants.PACKAGE_PO + ";");
             bw.newLine();
+            bw.newLine();
             bw.write("import java.io.Serializable;");
             bw.newLine();
 
@@ -53,6 +54,11 @@ public class BuildPo {
                 bw.newLine();
             }
 
+            bw.newLine();
+
+            // 构建类注解
+            BuildComment.createClassComment(bw, tableInfo.getComment());
+            bw.newLine();
             bw.write("public class " + tableInfo.getBeanName() + " implements Serializable {");
             bw.newLine();
 
