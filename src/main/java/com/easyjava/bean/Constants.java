@@ -50,6 +50,10 @@ public class Constants {
         // C:/Users/brace/easyjavas/easyjava-demo/src/main/java/com/easyjava/entity/po
         PATH_PO = PATH_BASE + "/" + PropertiesUtils.getString("package.po").replace(".", "/");
 
+        // com.easyjava.entity.po
+        // 设置包名
+        PACKAGE_PO = PACKAGE_BASE + "." + PropertiesUtils.getString("package.po");
+
     }
 
     public static void main(String[] args) {
