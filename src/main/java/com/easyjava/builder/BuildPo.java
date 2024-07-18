@@ -1,6 +1,7 @@
 package com.easyjava.builder;
 
 import com.easyjava.bean.Constants;
+import com.easyjava.bean.FieldInfo;
 import com.easyjava.bean.TableInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +36,33 @@ public class BuildPo {
             out = Files.newOutputStream(poFile.toPath());
             outw = new OutputStreamWriter(out, "utf8");
             bw = new BufferedWriter(outw);
+            // 开始生成头部内容
             bw.write("package " + Constants.PACKAGE_PO + ";");
             bw.newLine();
             bw.write("import java.io.Serializable;");
             bw.newLine();
+
+            // 导包
+            if (tableInfo.getHavaData() || tableInfo.getHaveDataTime()) {
+                bw.write("import java.util.Date;");
+                bw.newLine();
+            }
+
+            if (tableInfo.getHavaBigDecimal()) {
+                bw.write("import java.math.BigDecimal;");
+                bw.newLine();
+            }
+
             bw.write("public class " + tableInfo.getBeanName() + " implements Serializable {");
             bw.newLine();
+
+            // 开始生成 Property
+            for (FieldInfo fieldInfo : tableInfo.getFieldList()) {
+                bw.write("\tprivate " + fieldInfo.getJavaType() + " " + fieldInfo.getPropertyName() + ";");
+                bw.newLine();
+                bw.newLine();
+            }
+
             bw.write("}");
             bw.flush();
         } catch (Exception e) {

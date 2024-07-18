@@ -146,9 +146,16 @@ public class BuildTable {
                 fieldInfoList.add(fieldInfo);
 
                 // 设置时间相关 Property
-                tableInfo.setHaveDataTime(ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, sqlType));
-                tableInfo.setHavaData(ArrayUtils.contains(Constants.SQL_DATE_TYPES, sqlType));
-                tableInfo.setHavaBigDecimal(ArrayUtils.contains(Constants.SQL_DECIMAL_TYPE, sqlType));
+                // fix bug tableInfo 属性会被清除 因为遍历时字段类型有随机性
+                if (null == tableInfo.getHaveDataTime() || !tableInfo.getHaveDataTime()) {
+                    tableInfo.setHaveDataTime(ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, sqlType));
+                }
+                if (null == tableInfo.getHavaData() || !tableInfo.getHavaData()) {
+                    tableInfo.setHavaData(ArrayUtils.contains(Constants.SQL_DATE_TYPES, sqlType));
+                }
+                if (null == tableInfo.getHavaBigDecimal() || !tableInfo.getHavaBigDecimal()) {
+                    tableInfo.setHavaBigDecimal(ArrayUtils.contains(Constants.SQL_DECIMAL_TYPE, sqlType));
+                }
 
             }
 
