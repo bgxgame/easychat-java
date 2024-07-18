@@ -30,6 +30,8 @@ public class Constants {
     // entity.query
     public static String PACKAGE_PARAM;
 
+    public static String AUTHOR_COMMENT;
+
 
     // 包路径补充
     private static String PATH_JAVA = "java";
@@ -40,6 +42,8 @@ public class Constants {
     static {
         IGNORE_TABLE_PREFIX = Boolean.valueOf(PropertiesUtils.getString("ignore.table.prefix"));
         SUFFIX_BEAN_PARAM = PropertiesUtils.getString("suffix.bean.param");
+
+        AUTHOR_COMMENT =  PropertiesUtils.getString("author.comment");
 
         // com.easyjava
         PACKAGE_BASE = PropertiesUtils.getString("package.base");

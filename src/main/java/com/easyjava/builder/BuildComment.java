@@ -1,6 +1,10 @@
 package com.easyjava.builder;
 
+import com.easyjava.bean.Constants;
+import com.easyjava.utils.DateUtils;
+
 import java.io.BufferedWriter;
+import java.util.Date;
 
 /**
  * @Author brace
@@ -13,21 +17,27 @@ import java.io.BufferedWriter;
 public class BuildComment {
     public static void createClassComment(BufferedWriter bw, String classComment) throws Exception {
         /**
-         * @Description: TODO
-         * @Date 2024/7/18 14:15
+         * @Description: 用户信息表
+         * @author: brace
+         * @date: 2024/07/18
          */
         bw.write("/**");
         bw.newLine();
         bw.write(" * @Description: " + classComment);
         bw.newLine();
-        bw.write(" * @Date: ");
+        bw.write(" * @author: " + Constants.AUTHOR_COMMENT);
+        bw.newLine();
+        bw.write(" * @date: " + DateUtils.format(new Date(), DateUtils._YYYYMMDD));
         bw.newLine();
         bw.write(" */");
-
     }
 
-    public static void createFieldComment(BufferedWriter bw) {
-
+    public static void createFieldComment(BufferedWriter bw, String fieldComment) throws Exception {
+        bw.write("\t/**");
+        bw.newLine();
+        bw.write("\t *" + (fieldComment == null ? "" : fieldComment));
+        bw.newLine();
+        bw.write("\t */");
     }
 
     public static void createMethodComment(BufferedWriter bw) {

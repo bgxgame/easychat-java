@@ -64,6 +64,9 @@ public class BuildPo {
 
             // 开始生成 Property
             for (FieldInfo fieldInfo : tableInfo.getFieldList()) {
+                // 构建 Property 注解
+                BuildComment.createFieldComment(bw, fieldInfo.getComment());
+                bw.newLine();
                 bw.write("\tprivate " + fieldInfo.getJavaType() + " " + fieldInfo.getPropertyName() + ";");
                 bw.newLine();
                 bw.newLine();
