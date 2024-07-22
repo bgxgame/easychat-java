@@ -4,6 +4,7 @@ import com.easyjava.bean.Constants;
 import com.easyjava.bean.FieldInfo;
 import com.easyjava.bean.TableInfo;
 import com.easyjava.utils.DateUtils;
+import com.easyjava.utils.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +56,19 @@ public class BuildPo {
                 bw.newLine();
             }
 
+            // 忽略注释
+            Boolean haveIgnoreBean = false;
+            for (FieldInfo fieldInfo : tableInfo.getFieldList()) {
+                if (ArrayUtils.contains(Constants.IGNORE_BEAN_TOJSON_FILED.split(","), fieldInfo.getPropertyName())) {
+                    haveIgnoreBean = true;
+                    break;
+                }
+            }
+            if (haveIgnoreBean) {
+                bw.write(Constants.IGNORE_BEAN_TOJSON_CLASS);
+                bw.newLine();
+            }
+
             if (tableInfo.getHavaBigDecimal()) {
                 bw.write("import java.math.BigDecimal;");
                 bw.newLine();
@@ -89,7 +103,33 @@ public class BuildPo {
                     bw.write("\t" + String.format(Constants.BEAN_DATE_UNFORMAT_EXPRESSION, DateUtils.YYYY_MM_DD));
                     bw.newLine();
                 }
+
+                if (ArrayUtils.contains(Constants.IGNORE_BEAN_TOJSON_FILED.split(","), fieldInfo.getPropertyName())) {
+                    bw.write("\t" + Constants.IGNORE_BEAN_TOJSON_EXPRESSION);
+                    bw.newLine();
+                }
                 bw.write("\tprivate " + fieldInfo.getJavaType() + " " + fieldInfo.getPropertyName() + ";");
+                bw.newLine();
+                bw.newLine();
+            }
+
+            // 构建 setter getter
+            for (FieldInfo fieldInfo : tableInfo.getFieldList()) {
+                // setter
+                String tempField = StringUtils.upperCaseFirstLetter(fieldInfo.getPropertyName());
+                bw.write("\tpublic void set" + tempField + "(" + fieldInfo.getJavaType() + " " + fieldInfo.getPropertyName() + ") {");
+                bw.newLine();
+                bw.write("\t\tthis." + fieldInfo.getPropertyName() + " = " + fieldInfo.getPropertyName() + ";");
+                bw.newLine();
+                bw.write("\t}");
+                bw.newLine();
+                bw.newLine();
+                // getter
+                bw.write("\tpublic " + fieldInfo.getJavaType() + " get" + tempField + "(" + ") {");
+                bw.newLine();
+                bw.write("\t\treturn this." + fieldInfo.getPropertyName() + ";");
+                bw.newLine();
+                bw.write("\t}");
                 bw.newLine();
                 bw.newLine();
             }
