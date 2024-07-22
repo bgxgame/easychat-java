@@ -17,6 +17,17 @@ public class Constants {
     public static Boolean IGNORE_TABLE_PREFIX;
     // 参数bean后缀
     public static String SUFFIX_BEAN_PARAM;
+
+    // 需要忽略的属性
+    public static String IGNORE_BEAN_TOJSON_FILED;
+    public static String IGNORE_BEAN_TOJSON_EXPRESSION;
+    public static String IGNORE_BEAN_TOJSON_CLASS;
+
+    // 日期序列化、反序列化
+    public static String BEAN_DATE_FORMAT_EXPRESSION;
+    public static String BEAN_DATE_FORMAT_CLASS;
+    public static String BEAN_DATE_UNFORMAT_EXPRESSION;
+    public static String BEAN_DATE_UNFORMAT_CLASS;
     // 物料输出路径
     public static String PATH_BASE;
     public static String PATH_PO;
@@ -43,20 +54,30 @@ public class Constants {
         IGNORE_TABLE_PREFIX = Boolean.valueOf(PropertiesUtils.getString("ignore.table.prefix"));
         SUFFIX_BEAN_PARAM = PropertiesUtils.getString("suffix.bean.param");
 
-        AUTHOR_COMMENT =  PropertiesUtils.getString("author.comment");
+        IGNORE_BEAN_TOJSON_FILED = PropertiesUtils.getString("ignore.bean.tojson.filed");
 
-        // com.easyjava
+        IGNORE_BEAN_TOJSON_EXPRESSION = PropertiesUtils.getString("ignore.bean.tojson.expression");
+        IGNORE_BEAN_TOJSON_CLASS = PropertiesUtils.getString("ignore.bean.tojson.class");
+
+        BEAN_DATE_FORMAT_EXPRESSION = PropertiesUtils.getString("bean.date.format.expression");
+        BEAN_DATE_FORMAT_CLASS = PropertiesUtils.getString("bean.date.format.class");
+        BEAN_DATE_UNFORMAT_EXPRESSION = PropertiesUtils.getString("bean.date.unformat.expression");
+        BEAN_DATE_UNFORMAT_CLASS = PropertiesUtils.getString("bean.date.unformat.class");
+
+        AUTHOR_COMMENT = PropertiesUtils.getString("author.comment");
+
+        // 基本包路径 com.easyjava
         PACKAGE_BASE = PropertiesUtils.getString("package.base");
 
-        // C:/Users/brace/easyjavas/easyjava-demo/src/main/java/com/easyjava
-        PATH_BASE = (PropertiesUtils.getString("path.base") + PATH_JAVA + "/" + PACKAGE_BASE).replace(".", "/");
+        // com.easyjava.entity.po
+        // 设置po的包路径
+        PACKAGE_PO = PACKAGE_BASE + "." + PropertiesUtils.getString("package.po");
+
+        // C:/Users/brace/easyjavas/easyjava-demo/src/main/java
+        PATH_BASE = PropertiesUtils.getString("path.base") + PATH_JAVA;
 
         // C:/Users/brace/easyjavas/easyjava-demo/src/main/java/com/easyjava/entity/po
-        PATH_PO = PATH_BASE + "/" + PropertiesUtils.getString("package.po").replace(".", "/");
-
-        // com.easyjava.entity.po
-        // 设置包名
-        PACKAGE_PO = PACKAGE_BASE + "." + PropertiesUtils.getString("package.po");
+        PATH_PO = PATH_BASE + "/" + PACKAGE_PO.replace(".", "/");
 
     }
 

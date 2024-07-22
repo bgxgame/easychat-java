@@ -3,6 +3,8 @@ package com.easyjava.builder;
 import com.easyjava.bean.Constants;
 import com.easyjava.bean.FieldInfo;
 import com.easyjava.bean.TableInfo;
+import com.easyjava.utils.DateUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +49,10 @@ public class BuildPo {
             if (tableInfo.getHavaData() || tableInfo.getHaveDataTime()) {
                 bw.write("import java.util.Date;");
                 bw.newLine();
+                bw.write(Constants.BEAN_DATE_FORMAT_CLASS);
+                bw.newLine();
+                bw.write(Constants.BEAN_DATE_UNFORMAT_CLASS);
+                bw.newLine();
             }
 
             if (tableInfo.getHavaBigDecimal()) {
@@ -67,6 +73,22 @@ public class BuildPo {
                 // 构建 Property 注解
                 BuildComment.createFieldComment(bw, fieldInfo.getComment());
                 bw.newLine();
+                // 构建 Date 注解
+                if (ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, fieldInfo.getSqlType())) {
+                    bw.write("\t" + String.format(Constants.BEAN_DATE_FORMAT_EXPRESSION, DateUtils.YYYY_MM_DD_HH_MM_SS));
+                    bw.newLine();
+
+                    bw.write("\t" + String.format(Constants.BEAN_DATE_UNFORMAT_EXPRESSION, DateUtils.YYYY_MM_DD_HH_MM_SS));
+                    bw.newLine();
+                }
+
+                if (ArrayUtils.contains(Constants.SQL_DATE_TYPES, fieldInfo.getSqlType())) {
+                    bw.write("\t" + String.format(Constants.BEAN_DATE_FORMAT_EXPRESSION, DateUtils.YYYY_MM_DD));
+                    bw.newLine();
+
+                    bw.write("\t" + String.format(Constants.BEAN_DATE_UNFORMAT_EXPRESSION, DateUtils.YYYY_MM_DD));
+                    bw.newLine();
+                }
                 bw.write("\tprivate " + fieldInfo.getJavaType() + " " + fieldInfo.getPropertyName() + ";");
                 bw.newLine();
                 bw.newLine();
