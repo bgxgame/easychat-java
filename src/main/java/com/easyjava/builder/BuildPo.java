@@ -134,6 +134,25 @@ public class BuildPo {
                 bw.newLine();
             }
 
+            // 重写 toString
+            StringBuffer toString = new StringBuffer();
+            toString.append("\"" + tableInfo.getTableName() + "{\"" + " + ");
+            for (FieldInfo fieldInfo : tableInfo.getFieldList()) {
+                toString.append("\"").append(fieldInfo.getComment()).append(": ").append("\"").append(" + ");
+                toString.append("(" + fieldInfo.getPropertyName() + " == " + "null" + " ? " + "\"空\"" + " : " + fieldInfo.getPropertyName() + ")");
+                toString.append(" + \",\" + ");
+            }
+            String toStringStr = toString.substring(0, toString.lastIndexOf(",")) + "}";
+            bw.write("\t@Override");
+            bw.newLine();
+            bw.write("\tpublic String toString() {");
+            bw.newLine();
+            bw.write("\t\treturn " + toStringStr + "\";");
+            bw.newLine();
+            bw.write("\t}");
+            bw.newLine();
+            bw.newLine();
+
             bw.write("}");
             bw.flush();
         } catch (Exception e) {
