@@ -54,6 +54,10 @@ public class BuildPo {
                 bw.newLine();
                 bw.write(Constants.BEAN_DATE_UNFORMAT_CLASS);
                 bw.newLine();
+                bw.write("import " + Constants.PACKAGE_ENUMS + ".DateTimePatternEnum" + ";");
+                bw.newLine();
+                bw.write("import " + Constants.PACKAGE_UTILS + ".DateUtils" + ";");
+                bw.newLine();
             }
 
             // 忽略注释
@@ -139,7 +143,16 @@ public class BuildPo {
             toString.append("\"" + tableInfo.getTableName() + "{\"" + " + ");
             for (FieldInfo fieldInfo : tableInfo.getFieldList()) {
                 toString.append("\"").append(fieldInfo.getComment()).append(": ").append("\"").append(" + ");
-                toString.append("(" + fieldInfo.getPropertyName() + " == " + "null" + " ? " + "\"空\"" + " : " + fieldInfo.getPropertyName() + ")");
+                toString.append("(" + fieldInfo.getPropertyName() + " == " + "null" + " ? " + "\"空\"" + " : ");
+                String propertyName = fieldInfo.getPropertyName();
+                if (ArrayUtils.contains(Constants.SQL_DATE_TIME_TYPES, fieldInfo.getSqlType())) {
+                    toString.append("DateUtils.format(" + propertyName + "," + "DateTimePatternEnum.YYYY_MM_DD_HH_MM_SS.getPattern())");
+                } else if (ArrayUtils.contains(Constants.SQL_DATE_TYPES, fieldInfo.getSqlType())) {
+                    toString.append("DateUtils.format(" + propertyName + "," + "DateTimePatternEnum.YYYY_MM_DD.getPattern())");
+                } else {
+                    toString.append(fieldInfo.getPropertyName());
+                }
+                toString.append(")");
                 toString.append(" + \",\" + ");
             }
             String toStringStr = toString.substring(0, toString.lastIndexOf(",")) + "}";

@@ -28,25 +28,26 @@ public class Constants {
     public static String BEAN_DATE_FORMAT_CLASS;
     public static String BEAN_DATE_UNFORMAT_EXPRESSION;
     public static String BEAN_DATE_UNFORMAT_CLASS;
-    // 物料输出路径
-    public static String PATH_BASE;
-    public static String PATH_PO;
+    public static String AUTHOR_COMMENT;
 
     // 物料输出父包名
     public static String PACKAGE_BASE;
 
     // PO包名 entity.po
     public static String PACKAGE_PO;
+    public static String PACKAGE_UTILS;
+    public static String PACKAGE_ENUMS;
 
     // entity.query
     public static String PACKAGE_PARAM;
 
-    public static String AUTHOR_COMMENT;
-
-
+    // 物料输出路径
+    public static String PATH_BASE;
+    public static String PATH_PO;
+    public static String PATH_UTILS;
+    public static String PATH_ENUMS;
     // 包路径补充
     private static String PATH_JAVA = "java";
-
     // 资源路径补充
     private static String PATH_RESOURCE = "resource";
 
@@ -73,12 +74,18 @@ public class Constants {
         // 设置po的包路径
         PACKAGE_PO = PACKAGE_BASE + "." + PropertiesUtils.getString("package.po");
 
+        PACKAGE_UTILS = PACKAGE_BASE + "." + PropertiesUtils.getString("package.utils");
+        PACKAGE_ENUMS = PACKAGE_BASE + "." + PropertiesUtils.getString("package.enums");
+
+
         // C:/Users/brace/easyjavas/easyjava-demo/src/main/java
         PATH_BASE = PropertiesUtils.getString("path.base") + PATH_JAVA;
 
         // C:/Users/brace/easyjavas/easyjava-demo/src/main/java/com/easyjava/entity/po
         PATH_PO = PATH_BASE + "/" + PACKAGE_PO.replace(".", "/");
 
+        PATH_UTILS = PATH_BASE + "/" + PACKAGE_UTILS.replace(".", "/");
+        PATH_ENUMS = PATH_BASE + "/" + PACKAGE_ENUMS.replace(".", "/");
     }
 
     public static void main(String[] args) {
