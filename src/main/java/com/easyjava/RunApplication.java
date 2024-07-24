@@ -3,6 +3,7 @@ package com.easyjava;
 import com.easyjava.bean.TableInfo;
 import com.easyjava.builder.BuildBase;
 import com.easyjava.builder.BuildPo;
+import com.easyjava.builder.BuildQuery;
 import com.easyjava.builder.BuildTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ public class RunApplication {
         BuildBase.execute();
         for (TableInfo tableInfo : tableInfoList) {
             BuildPo.execute(tableInfo);
+            BuildQuery.execute(tableInfo);
         }
     }
 }

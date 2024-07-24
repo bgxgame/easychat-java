@@ -65,7 +65,7 @@ public class BuildTable {
                 tableInfo.setTableName(tableName);
                 tableInfo.setBeanName(beanName);
                 tableInfo.setComment(comment);
-                tableInfo.setBeanParamName(beanName + Constants.SUFFIX_BEAN_PARAM);
+                tableInfo.setBeanParamName(beanName + Constants.SUFFIX_BEAN_QUERY);
 
                 // 得到表字段信息清单
                 readFieldInfo(tableInfo);
